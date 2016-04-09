@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
+
 public class GameController : MonoBehaviour {
     
     public GameObject [][] mBallsList;
@@ -119,6 +123,14 @@ public class GameController : MonoBehaviour {
                 mBallsList[i][j] = ball;
             }
         }
+    }
+
+    public void Exit(){
+        #if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+        #else
+             Application.Quit();
+        #endif
     }
 
     void ApplyGravity() {
