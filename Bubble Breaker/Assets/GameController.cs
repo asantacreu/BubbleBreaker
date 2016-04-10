@@ -7,6 +7,13 @@ using UnityEngine.EventSystems;
     using UnityEditor;
 #endif
 
+public enum GAME_MODE{
+    Standard=0,
+	Continuous=1,
+    Shifter=2,
+    MegaShift = 3,
+};
+
 public class GameController : MonoBehaviour {
     
     public GameObject [][] mBallsList;
@@ -20,6 +27,7 @@ public class GameController : MonoBehaviour {
     public Text GroupScore;
 
     public int mScore = 0;
+    public GAME_MODE mGameMode = GAME_MODE.Standard;
 
     private List<GameObject> mSelectedGroup;
 
@@ -87,6 +95,7 @@ public class GameController : MonoBehaviour {
             }
         }
         
+        mGameMode = (GAME_MODE) PlayerPrefs.GetInt("GameMode");
         mScore = 0;
 
         for (int i = 0; i < rows; i++){
@@ -440,5 +449,9 @@ public class GameController : MonoBehaviour {
 
     public void CreateNewGameButtonClicked() {
         startNewGame = true;
+    }
+
+    public void ChangeGameMode(int value) {
+        PlayerPrefs.SetInt("GameMode", value);
     }
 };
