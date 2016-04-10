@@ -194,15 +194,25 @@ public class GameController : MonoBehaviour {
         #endif
 
         if (clickDown) {
-            RaycastHit2D hit;
 
             Vector3 input = new Vector3(0, 0, 0);
-            
+
             #if UNITY_ANDROID
                 input = Input.GetTouch(0).position;
             #else
-                 input = Input.mousePosition;
+                input = Input.mousePosition;
             #endif
+
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = input;
+
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+            if (raycastResults.Count > 0) {
+                return;
+            }
+
+            RaycastHit2D hit;
 
             Ray aux = Camera.main.ScreenPointToRay(input);
             hit = Physics2D.Raycast(aux.origin, aux.direction,
