@@ -18,16 +18,10 @@ public class GameController : MonoBehaviour {
     
     public GameObject [][] mBallsList;
 
-    public Text UIScore;
-    public GameObject GameOverPanel;
-    public Button NewGame;
-    public Text EndText;
-    public Text EndPanelScore;
-    public Text HighScore;
-    public Text GroupScore;
-
     public int mScore = 0;
     public GAME_MODE mGameMode = GAME_MODE.Standard;
+
+    public UIController mUIController;
 
     private List<GameObject> mSelectedGroup;
 
@@ -42,12 +36,7 @@ public class GameController : MonoBehaviour {
     private bool clickDownPrev = false;
 
     // Use this for initialization
-    void Start() { 
-
-        //GameOverPanel = Instantiate(Resources.Load("GameOverPanel")) as GameObject;
-        GameOverPanel.SetActive(false);
-        //GameOverPanel.transform.SetParent(FindObjectOfType<Canvas>().transform);
-        GameOverPanel.transform.localPosition = new Vector3(0, 0, 0);
+    void Start() {
 
         mSelectedGroup = new List<GameObject>();
 
@@ -61,22 +50,12 @@ public class GameController : MonoBehaviour {
             CreateNewGame();
         }
 
-        UIScore.text = "Score = " + mScore;
-        HighScore.text = "High Score = " + PlayerPrefs.GetInt("HighScore");
-        if (mSelectedGroup.Count > 0) {
-            GroupScore.text = "Group Score = " + mSelectedGroup.Count * (mSelectedGroup.Count - 1);
-        }
-        else {
-            GroupScore.text = "";
-        }
-        
-
         OnClick();
     }
 
     public void CreateNewGame(){
         startNewGame = false;
-        GameOverPanel.SetActive(false);
+        mUIController.HideGameOver();
         mSelectedGroup.Clear();
         if (mBallsList != null) {
             for (int i = 0; i < rows; i++){
@@ -141,6 +120,17 @@ public class GameController : MonoBehaviour {
              Application.Quit();
         #endif
     }
+
+
+    public int GetScore() {
+        return mScore;
+    }
+
+    public int GetGroupSelectedSize() {
+        return mSelectedGroup.Count;
+    }
+
+
 
     void ApplyGravity() {
         for (int i = 0; i < columns; i++){
@@ -424,26 +414,29 @@ public class GameController : MonoBehaviour {
     }
 
     private void EndGame() {
+        
+        mUIController.SetEndGameScore("Game Score = " + mScore);
 
+        int ballsLeft = BallsLeft();
+        int bonusScore = (ballsLeft * -20) + 100;
+        if (ballsLeft < 5) {
+            mUIController.SetEndBonusScore("Bonus Score = " + bonusScore);
+            mScore += bonusScore;
+            mUIController.SetEndTotalScore("Total Score  = " + mScore);
+        }
+
+        string endText;
         int historicHighScore = PlayerPrefs.GetInt("HighScore");
-
         if (mScore > historicHighScore) {
             PlayerPrefs.SetInt("HighScore", mScore);
-            EndText.text = "New High Score!";
+            endText = "New High Score!";
+        }else {
+            endText = "Game Over!";
         }
-        else {
-            EndText.text = "Game Over!";
-        }
+        mUIController.SetEndText(endText);
 
-        EndPanelScore.text = "Game Score = " + mScore;
 
-        GameOverPanel.SetActive(true);
-
-        //notify no moves left
-
-        //Check if high score and show it
-
-        //Ask if want to play again
+        mUIController.ShowGameOver();
 
     }
 
@@ -453,5 +446,17 @@ public class GameController : MonoBehaviour {
 
     public void ChangeGameMode(int value) {
         PlayerPrefs.SetInt("GameMode", value);
+    }
+
+    private int BallsLeft() {
+        int ballsLeft = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (mBallsList[i][j] != null) {
+                    ballsLeft++;
+                }
+            }
+        }
+        return ballsLeft;
     }
 };
