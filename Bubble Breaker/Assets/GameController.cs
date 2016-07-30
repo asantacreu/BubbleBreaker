@@ -147,13 +147,30 @@ public class GameController : MonoBehaviour {
                 MoveColumnDown(i);
             }
         }
-        while (SearchForHoleInFirstRow()){
+        while (SearchForHoleInFirstRow()){//Compact Columns
             MoveColumnsToRight();
         }
 
-        if (!MovesLeft()) {
-            EndGame();
+    }
+
+    void ShiftBallsRight() {
+        for (int i = 0; i < rows; i++){
+            while (SearchForHoleInRow(i)){
+                ShiftRowRight(i);
+            }
         }
+    }
+
+    bool SearchForHoleInRow(int row) {
+        int top = -1;
+        for (int i = 0; i < columns; i++) {
+            if (top == -1 && mBallsList[row][i]) {
+                top = i;
+            } else if (top != -1 && !mBallsList[row][i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool SearchForHoleInColumn(int column) {
@@ -168,6 +185,23 @@ public class GameController : MonoBehaviour {
         return false;
     }
 
+     void ShiftRowRight(int row) {
+        for (int i = columns-1; i > 0; i--) {
+            if (!mBallsList[row][i]){
+                for (int j = i; j>0; j--) {
+                    GameObject ball = null;
+                    if (mBallsList[row][j - 1]) {
+                        ball = mBallsList[row][j - 1];
+                        mBallsList[row][j - 1] = null;
+                        mBallsList[row][j] = ball;
+                        ball.GetComponent<Ball>().mColPos++;
+                        ball.transform.localPosition = new Vector2(j, row);
+                    }
+                }
+            }
+        }        
+    }
+
     void MoveColumnDown(int column) {
         for (int i = 0; i < rows; i++) {
             if (!mBallsList[i][column]){
@@ -179,10 +213,7 @@ public class GameController : MonoBehaviour {
                         mBallsList[j][column] = ball;
                         ball.GetComponent<Ball>().mRowPos--;
                         ball.transform.localPosition = new Vector2(column, j);
-
                     }
-                    
-
                 }
             }
         }        
@@ -202,7 +233,6 @@ public class GameController : MonoBehaviour {
         #endif
 
         if (clickDown) {
-
             Vector3 input = new Vector3(0, 0, 0);
 
             #if UNITY_ANDROID
@@ -232,10 +262,19 @@ public class GameController : MonoBehaviour {
                     if (IsBallInSelectedGroup(ball)) {
                         ApplyScore();
                         DeleteSelectedGroup();
+
                         ApplyGravity();
+
+
+                        if (mGameMode == GAME_MODE.Shifter){
+                            ShiftBallsRight();
+                        }
+
+                        if (!MovesLeft()) {
+                            EndGame();
+                        }
                     }else {
                         ClearSelectedGroup();
-                        
                     }
                 }else{
                     ClearSelectedGroup();
