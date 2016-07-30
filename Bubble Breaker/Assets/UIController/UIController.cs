@@ -6,12 +6,27 @@ public class UIController : MonoBehaviour {
     public Dropdown mGameModeSelector;
     public Text UIScore;
     public GameObject GameOverPanel;
-    public Button NewGame;
     public Text EndText;
     public Text EndGameScore;
     public Text EndBonusScore;
     public Text EndTotalScore;
-    public Text HighScore;
+
+    public Text GamesStandard;
+    public Text AverageStandard;
+    public Text HighStandard;
+
+    public Text GamesContinuous  ;
+    public Text AverageContinuous;
+    public Text HighContinuous   ;
+
+    public Text GamesShifter  ;
+    public Text AverageShifter;
+    public Text HighShifter   ;
+
+    public Text GamesMegaShift  ;
+    public Text AverageMegaShift;
+    public Text HighMegaShift   ;
+
     public Text GroupScore;
 
     public GameController mGameController;
@@ -32,7 +47,22 @@ public class UIController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         UIScore.text = "Score = " + mGameController.GetScore();
-        HighScore.text = "High Score = " + PlayerPrefs.GetInt("HighScore");
+
+        GamesStandard.text   = PlayerPrefs.GetInt("GamesStandard",0).ToString();
+        AverageStandard.text = PlayerPrefs.GetInt("AverageStandard", 0).ToString();
+        HighStandard.text    = PlayerPrefs.GetInt("HighStandard", 0).ToString();
+
+        GamesContinuous.text   = PlayerPrefs.GetInt("GamesContinuous", 0).ToString();
+        AverageContinuous.text = PlayerPrefs.GetInt("AverageContinuous", 0).ToString();
+        HighContinuous.text    = PlayerPrefs.GetInt("HighContinuous", 0).ToString();
+
+        GamesShifter.text   = PlayerPrefs.GetInt("GamesShifter", 0).ToString();
+        AverageShifter.text = PlayerPrefs.GetInt("AverageShifter", 0).ToString();
+        HighShifter.text    = PlayerPrefs.GetInt("HighShifter", 0).ToString();
+
+        GamesMegaShift.text   = PlayerPrefs.GetInt("GamesMegaShift", 0).ToString();
+        AverageMegaShift.text = PlayerPrefs.GetInt("AverageMegaShift", 0).ToString();
+        HighMegaShift.text    = PlayerPrefs.GetInt("HighMegaShift", 0).ToString();
 
         int groupSelectedSize = mGameController.GetGroupSelectedSize();
         if (groupSelectedSize > 0) {
@@ -45,6 +75,8 @@ public class UIController : MonoBehaviour {
 
     public void HideGameOver() {
         GameOverPanel.SetActive(false);
+        EndBonusScore.text = "";
+        EndTotalScore.text = "";
     }
 
     public void ShowGameOver() {

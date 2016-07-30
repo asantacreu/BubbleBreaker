@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 #if UNITY_EDITOR
@@ -51,6 +50,16 @@ public class GameController : MonoBehaviour {
         }
 
         OnClick();
+    }
+
+    public string GetGameModeStr() {
+        switch (mGameMode) {
+            case GAME_MODE.Standard:    return "Standard";
+            case GAME_MODE.Continuous:  return "Continuous";
+            case GAME_MODE.Shifter:     return "Shifter";
+            case GAME_MODE.MegaShift:   return "MegaShift";
+            default:                    return "";
+        }    
     }
 
     public void CreateNewGame(){
@@ -426,15 +435,24 @@ public class GameController : MonoBehaviour {
         }
 
         string endText;
-        int historicHighScore = PlayerPrefs.GetInt("HighScore");
-        if (mScore > historicHighScore) {
-            PlayerPrefs.SetInt("HighScore", mScore);
+        string gameModeStr = GetGameModeStr();
+        
+
+        int historicGames = PlayerPrefs.GetInt("Games" + gameModeStr, 0);
+        PlayerPrefs.SetInt("Games" + gameModeStr, historicGames+1);
+        int historicAverage = PlayerPrefs.GetInt("Average" + gameModeStr, 0);
+
+        int newAverage = (historicAverage * (historicGames) + mScore) / (historicGames + 1);
+        PlayerPrefs.SetInt("Average" + gameModeStr, newAverage);
+
+        int historicHigh = PlayerPrefs.GetInt("High" + gameModeStr, 0);
+        if (mScore > historicHigh) {
+            PlayerPrefs.SetInt("High" + gameModeStr, mScore);
             endText = "New High Score!";
         }else {
             endText = "Game Over!";
         }
         mUIController.SetEndText(endText);
-
 
         mUIController.ShowGameOver();
 
@@ -446,6 +464,24 @@ public class GameController : MonoBehaviour {
 
     public void ChangeGameMode(int value) {
         PlayerPrefs.SetInt("GameMode", value);
+    }
+
+    public void ResetStatistics() {
+        PlayerPrefs.SetInt("GamesStandard", 0);
+        PlayerPrefs.SetInt("AverageStandard", 0);
+        PlayerPrefs.SetInt("HighStandard", 0);
+                    
+        PlayerPrefs.SetInt("GamesContinuous", 0);
+        PlayerPrefs.SetInt("AverageContinuous", 0);
+        PlayerPrefs.SetInt("HighContinuous", 0);
+                    
+        PlayerPrefs.SetInt("GamesShifter", 0);
+        PlayerPrefs.SetInt("AverageShifter", 0);
+        PlayerPrefs.SetInt("HighShifter", 0);
+                    
+        PlayerPrefs.SetInt("GamesMegaShift", 0);
+        PlayerPrefs.SetInt("AverageMegaShift", 0);
+        PlayerPrefs.SetInt("HighMegaShift", 0);
     }
 
     private int BallsLeft() {
@@ -460,3 +496,4 @@ public class GameController : MonoBehaviour {
         return ballsLeft;
     }
 };
+
