@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour {
     
     public GameObject [][] mBallsList;
 
+    public List<GameObject> mNewLine;
+
     public int mScore = 0;
     public GAME_MODE mGameMode = GAME_MODE.Standard;
 
@@ -38,6 +40,8 @@ public class GameController : MonoBehaviour {
     void Start() {
 
         mSelectedGroup = new List<GameObject>();
+
+        mNewLine = new List<GameObject>();
 
         startNewGame = true;
     }
@@ -66,6 +70,7 @@ public class GameController : MonoBehaviour {
         startNewGame = false;
         mUIController.HideGameOver();
         mSelectedGroup.Clear();
+        
         if (mBallsList != null) {
             for (int i = 0; i < rows; i++){
                 for (int j = 0; j < columns; j++){
@@ -77,12 +82,16 @@ public class GameController : MonoBehaviour {
             }
         }else {
             mBallsList = new GameObject[rows][];
-            for (int i = 0; i < rows; i++)
-            {
+            for (int i = 0; i < rows; i++){
                 mBallsList[i] = new GameObject[columns];
             }
         }
-        
+
+        for (int i = 0; i < mNewLine.Count; i++) {
+            Destroy(mNewLine[i]);
+        }
+        mNewLine.Clear();
+
         mGameMode = (GAME_MODE) PlayerPrefs.GetInt("GameMode");
         mScore = 0;
 
@@ -120,6 +129,10 @@ public class GameController : MonoBehaviour {
                 mBallsList[i][j] = ball;
             }
         }
+
+        if (mGameMode == GAME_MODE.Continuous || mGameMode == GAME_MODE.MegaShift) {
+            GenerateNewLine();
+        }
     }
 
     public void Exit(){
@@ -147,10 +160,71 @@ public class GameController : MonoBehaviour {
                 MoveColumnDown(i);
             }
         }
-        while (SearchForHoleInFirstRow()){//Compact Columns
+    }
+
+    void CompactColumns(){
+        bool newLineMode = (mGameMode == GAME_MODE.Continuous || mGameMode == GAME_MODE.MegaShift);
+
+        while (SearchForHoleInFirstRow() || (SearchForSpaceForNewLine() && newLineMode)) {
             MoveColumnsToRight();
+            if (newLineMode) {
+                ApplyNewLine();
+            }
+        }
+    }
+
+    void ApplyNewLine() {
+        for(int i = 0; i < mNewLine.Count; i++) {
+            GameObject ball = Instantiate(Resources.Load("Ball")) as GameObject;
+
+            GameObject newLineBall = mNewLine[i];
+            
+            ball.GetComponent<SpriteRenderer>().color = newLineBall.GetComponent<SpriteRenderer>().color;
+            ball.GetComponent<Ball>().mBallType = newLineBall.GetComponent<Ball>().mBallType;
+
+            ball.GetComponent<Ball>().mRowPos = i;
+            ball.GetComponent<Ball>().mColPos = 0;
+            ball.transform.localPosition = new Vector2(0,i);
+            mBallsList[i][0] = ball;
+            Destroy(mNewLine[i]);  
         }
 
+        mNewLine.Clear();
+
+        GenerateNewLine();
+    }
+
+    void GenerateNewLine() {
+        int randomRows = Random.Range(1, 8);
+        for (int i = 0; i < randomRows; i++){
+            int random = Random.Range(0, 4);
+            GameObject ball = Instantiate(Resources.Load("NewLineBall")) as GameObject;
+            switch(random){
+                case 0:
+                    ball.GetComponent<SpriteRenderer>().color = Color.blue;
+                    ball.GetComponent<Ball>().mBallType = BALL_TYPE.Type0;
+                    break;
+                case 1:
+                    ball.GetComponent<SpriteRenderer>().color = Color.green;
+                    ball.GetComponent<Ball>().mBallType = BALL_TYPE.Type1;
+                    break;
+                case 2:
+                    ball.GetComponent<SpriteRenderer>().color = Color.red;
+                    ball.GetComponent<Ball>().mBallType = BALL_TYPE.Type2;
+                    break;
+                case 3:
+                    ball.GetComponent<SpriteRenderer>().color = Color.yellow;
+                    ball.GetComponent<Ball>().mBallType = BALL_TYPE.Type3;
+                    break;
+                case 4:
+                    ball.GetComponent<SpriteRenderer>().color = Color.blue;
+                    ball.GetComponent<Ball>().mBallType = BALL_TYPE.Type4;
+                    break;
+                default: break;
+            }
+            ball.transform.localPosition = new Vector2(5.25f+0.5f*i, -1);
+            mNewLine.Add(ball);
+        }
     }
 
     void ShiftBallsRight() {
@@ -265,8 +339,9 @@ public class GameController : MonoBehaviour {
 
                         ApplyGravity();
 
+                        CompactColumns();
 
-                        if (mGameMode == GAME_MODE.Shifter){
+                        if (mGameMode == GAME_MODE.Shifter || mGameMode == GAME_MODE.MegaShift){
                             ShiftBallsRight();
                         }
 
@@ -385,6 +460,15 @@ public class GameController : MonoBehaviour {
             if (first == -1 && mBallsList[0][i]){
                 first = i;
             }else if (first != -1 && !mBallsList[0][i]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool SearchForSpaceForNewLine() {
+        for (int i = 0; i < columns; i++) {
+            if (!mBallsList[0][i]){
                 return true;
             }
         }
