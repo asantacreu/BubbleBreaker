@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 #if UNITY_EDITOR
-    using UnityEditor;
+using UnityEditor;
 #endif
 
 public enum GAME_MODE{
@@ -36,6 +37,8 @@ public class GameController : MonoBehaviour {
     private bool clickDown = false;
     private bool clickDownPrev = false;
 
+    private bool isOnClickRunning = false;
+
     // Use this for initialization
     void Start() {
 
@@ -52,8 +55,9 @@ public class GameController : MonoBehaviour {
         if (startNewGame){
             CreateNewGame();
         }
-
-        OnClick();
+        if (!isOnClickRunning) {
+            StartCoroutine(OnClick());
+        }
     }
 
     public string GetGameModeStr() {
@@ -154,23 +158,29 @@ public class GameController : MonoBehaviour {
 
 
 
-    void ApplyGravity() {
+    bool ApplyGravity() {
+        bool gravityApplyied = false;
         for (int i = 0; i < columns; i++){
             while (SearchForHoleInColumn(i)) {
+                gravityApplyied = true;
                 MoveColumnDown(i);
             }
         }
+        return gravityApplyied;
     }
 
-    void CompactColumns(){
+    bool CompactColumns(){
+        bool columnsCompacted = false;
         bool newLineMode = (mGameMode == GAME_MODE.Continuous || mGameMode == GAME_MODE.MegaShift);
 
         while (SearchForHoleInFirstRow() || (SearchForSpaceForNewLine() && newLineMode)) {
+            columnsCompacted = true;
             MoveColumnsToRight();
             if (newLineMode) {
                 ApplyNewLine();
             }
         }
+        return columnsCompacted;
     }
 
     void ApplyNewLine() {
@@ -227,12 +237,15 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    void ShiftBallsRight() {
+    bool ShiftBallsRight() {
+        bool ballsShifted = false;
         for (int i = 0; i < rows; i++){
             while (SearchForHoleInRow(i)){
+                ballsShifted = true;
                 ShiftRowRight(i);
             }
         }
+        return ballsShifted;
     }
 
     bool SearchForHoleInRow(int row) {
@@ -293,13 +306,14 @@ public class GameController : MonoBehaviour {
         }        
     }
 
-    public void OnClick() {
-
+    public IEnumerator OnClick() {
+        isOnClickRunning = true;
         #if UNITY_ANDROID
             if (Input.touchCount >= 1 != clickDownPrev) {
                 clickDown = Input.touchCount >= 1;
             }else{
-                return;
+                isOnClickRunning = false;
+                yield return null;
             }
             
         #else
@@ -321,7 +335,8 @@ public class GameController : MonoBehaviour {
             List<RaycastResult> raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointer, raycastResults);
             if (raycastResults.Count > 0) {
-                return;
+                isOnClickRunning = false;
+                yield return null;
             }
 
             RaycastHit2D hit;
@@ -335,14 +350,23 @@ public class GameController : MonoBehaviour {
                     GameObject ball = hit.collider.gameObject;
                     if (IsBallInSelectedGroup(ball)) {
                         ApplyScore();
-                        DeleteSelectedGroup();
 
-                        ApplyGravity();
+                        float deleteAnimationTime = DeleteSelectedGroup();
+                        yield return new WaitForSeconds(deleteAnimationTime);
 
-                        CompactColumns();
+                        if (ApplyGravity()) {
+                            yield return new WaitForSeconds(0.25f);
+                        }
+
+                        if (CompactColumns()) {
+                            yield return new WaitForSeconds(0.25f);
+                        }
+
 
                         if (mGameMode == GAME_MODE.Shifter || mGameMode == GAME_MODE.MegaShift){
-                            ShiftBallsRight();
+                             if (ShiftBallsRight()) {
+                                yield return new WaitForSeconds(0.25f);
+                            }
                         }
 
                         if (!MovesLeft()) {
@@ -365,6 +389,7 @@ public class GameController : MonoBehaviour {
             
         }
         clickDownPrev = clickDown;
+        isOnClickRunning = false;
     }
 
     public void SelectGroup(GameObject ball) {
@@ -389,9 +414,9 @@ public class GameController : MonoBehaviour {
         return false;
     }
 
-    public void DeleteSelectedGroup() {
-        while (mSelectedGroup.Count > 0)
-        {
+    public float DeleteSelectedGroup() {
+        float animationTime = 0f;
+        while (mSelectedGroup.Count > 0){
             GameObject ball = mSelectedGroup[0];
 
             for (int i = 0; i < rows; i++){
@@ -399,7 +424,10 @@ public class GameController : MonoBehaviour {
                     if (mBallsList[i][j]) { 
                         if (mBallsList[i][j].gameObject == ball) {
                             mSelectedGroup.Remove(ball);
-                            DestroyObject(mBallsList[i][j]);
+                            Animation animation = ball.GetComponent<Animation>();
+                            animation.Play();
+                            animationTime = animation.clip.length;
+                            DestroyObject(mBallsList[i][j],1);
                             mBallsList[i][j] = null;
                             break;
                         }
@@ -407,6 +435,7 @@ public class GameController : MonoBehaviour {
                 }
             }
         }
+        return animationTime;
     }
 
     private void ClearSelectedGroup() {
