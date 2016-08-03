@@ -27,7 +27,9 @@ public class UIController : MonoBehaviour {
     public Text AverageMegaShift;
     public Text HighMegaShift   ;
 
-    public Text GroupScore;
+    public Text UIGroupScore;
+
+    public Text UIGameMode;
 
     public GameController mGameController;
 
@@ -66,10 +68,12 @@ public class UIController : MonoBehaviour {
 
         int groupSelectedSize = mGameController.GetGroupSelectedSize();
         if (groupSelectedSize > 0) {
-            GroupScore.text = "Group Score = " + groupSelectedSize * (groupSelectedSize - 1);
+            UIGroupScore.text = "Group Score = " + groupSelectedSize * (groupSelectedSize - 1);
         }else {
-            GroupScore.text = "";
+            UIGroupScore.text = "";
         }
+
+        UIGameMode.text = mGameController.GetGameModeStr();
 	}
     
 
