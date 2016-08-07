@@ -322,7 +322,7 @@ public class GameController : MonoBehaviour {
                 clickDown = Input.touchCount >= 1;
             }else{
                 isOnClickRunning = false;
-                yield return null;
+                yield break;
             }
             
         #else
@@ -333,7 +333,12 @@ public class GameController : MonoBehaviour {
             Vector3 input = new Vector3(0, 0, 0);
 
             #if UNITY_ANDROID
-                input = Input.GetTouch(0).position;
+                Touch touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Began){
+                    if (touch.tapCount == 1) { 
+                        input = touch.position;
+                    }
+                }
             #else
                 input = Input.mousePosition;
             #endif
@@ -349,7 +354,7 @@ public class GameController : MonoBehaviour {
                 uiHit = IsUIClicked(raycastResults);
 
                 isOnClickRunning = false;
-                yield return null;
+                yield break;
             }
 
             RaycastHit2D hit;
