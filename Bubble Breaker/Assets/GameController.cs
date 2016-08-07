@@ -306,6 +306,15 @@ public class GameController : MonoBehaviour {
         }        
     }
 
+    private bool IsUIClicked(List<RaycastResult> raycastResults) {
+        for (int i = 0; i < raycastResults.Count; i++) {
+            if (raycastResults[i].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public IEnumerator OnClick() {
         isOnClickRunning = true;
         #if UNITY_ANDROID
@@ -334,7 +343,11 @@ public class GameController : MonoBehaviour {
 
             List<RaycastResult> raycastResults = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointer, raycastResults);
+            bool uiHit = false;
             if (raycastResults.Count > 0) {
+
+                uiHit = IsUIClicked(raycastResults);
+
                 isOnClickRunning = false;
                 yield return null;
             }
@@ -345,48 +358,49 @@ public class GameController : MonoBehaviour {
             hit = Physics2D.Raycast(aux.origin, aux.direction,
                                         Mathf.Infinity, 1 << LayerMask.NameToLayer("Default"));
 
-            if (mSelectedGroup.Count > 0) {
-                if (hit) {
-                    GameObject ball = hit.collider.gameObject;
-                    if (IsBallInSelectedGroup(ball)) {
-                        ApplyScore();
+            if (!uiHit) { 
+                if (mSelectedGroup.Count > 0) {
+                    if (hit) {
+                        GameObject ball = hit.collider.gameObject;
+                        if (IsBallInSelectedGroup(ball)) {
+                            ApplyScore();
 
-                        float deleteAnimationTime = DeleteSelectedGroup();
-                        yield return new WaitForSeconds(deleteAnimationTime);
+                            float deleteAnimationTime = DeleteSelectedGroup();
+                            yield return new WaitForSeconds(deleteAnimationTime);
 
-                        if (ApplyGravity()) {
-                            yield return new WaitForSeconds(0.25f);
-                        }
-
-                        if (CompactColumns()) {
-                            yield return new WaitForSeconds(0.25f);
-                        }
-
-
-                        if (mGameMode == GAME_MODE.Shifter || mGameMode == GAME_MODE.MegaShift){
-                             if (ShiftBallsRight()) {
+                            if (ApplyGravity()) {
                                 yield return new WaitForSeconds(0.25f);
                             }
-                        }
 
-                        if (!MovesLeft()) {
-                            EndGame();
+                            if (CompactColumns()) {
+                                yield return new WaitForSeconds(0.25f);
+                            }
+
+
+                            if (mGameMode == GAME_MODE.Shifter || mGameMode == GAME_MODE.MegaShift){
+                                 if (ShiftBallsRight()) {
+                                    yield return new WaitForSeconds(0.25f);
+                                }
+                            }
+
+                            if (!MovesLeft()) {
+                                EndGame();
+                            }
+                        }else {
+                            ClearSelectedGroup();
                         }
-                    }else {
+                    }else{
                         ClearSelectedGroup();
                     }
-                }else{
-                    ClearSelectedGroup();
-                }
-            } else {
-                if (hit) {
-                    GameObject ball = hit.collider.gameObject;
-                    if (ball.GetComponent<Ball>()) {
-                        SelectGroup(ball);
+                } else {
+                    if (hit) {
+                        GameObject ball = hit.collider.gameObject;
+                        if (ball.GetComponent<Ball>()) {
+                            SelectGroup(ball);
+                        }
                     }
                 }
             }
-            
         }
         clickDownPrev = clickDown;
         isOnClickRunning = false;
