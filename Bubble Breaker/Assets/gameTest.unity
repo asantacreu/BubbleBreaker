@@ -256,35 +256,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 37007633}
---- !u!1 &64550597
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 134192, guid: 4d4e41283d9bb3148b820459f5a957d3, type: 2}
-  m_PrefabInternal: {fileID: 997743528}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 64550598}
-  - component: {fileID: 204488339}
-  m_Layer: 0
-  m_Name: GameController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &64550598
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 436618, guid: 4d4e41283d9bb3148b820459f5a957d3, type: 2}
-  m_PrefabInternal: {fileID: 997743528}
-  m_GameObject: {fileID: 64550597}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 452.9135, y: 214.73271, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &74834487
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,35 +330,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 74834487}
---- !u!1 &77505408
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 151266, guid: b2e8400f998569a42a4c53c57f6a8682, type: 2}
-  m_PrefabInternal: {fileID: 193886382}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 77505409}
-  - component: {fileID: 1868572033}
-  m_Layer: 0
-  m_Name: UIController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &77505409
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 404602, guid: b2e8400f998569a42a4c53c57f6a8682, type: 2}
-  m_PrefabInternal: {fileID: 193886382}
-  m_GameObject: {fileID: 77505408}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 452.9135, y: 214.73271, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &113273683
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,25 +548,13 @@ Prefab:
       objectReference: {fileID: 731095417}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b2e8400f998569a42a4c53c57f6a8682, type: 2}
-  m_RootGameObject: {fileID: 77505408}
   m_IsPrefabParent: 0
---- !u!114 &204488339
+--- !u!114 &204488339 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11495790, guid: 4d4e41283d9bb3148b820459f5a957d3,
     type: 2}
   m_PrefabInternal: {fileID: 997743528}
-  m_GameObject: {fileID: 64550597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45cd2841af197be48a3621440d92f3d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mNewLine: []
-  mScore: 0
-  mGameMode: 0
-  mUIController: {fileID: 1868572033}
-  startNewGame: 1
 --- !u!1 &212176240
 GameObject:
   m_ObjectHideFlags: 0
@@ -2974,7 +2904,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1424697431}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -3093,7 +3023,6 @@ Prefab:
       objectReference: {fileID: 1868572033}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4d4e41283d9bb3148b820459f5a957d3, type: 2}
-  m_RootGameObject: {fileID: 64550597}
   m_IsPrefabParent: 0
 --- !u!1 &1019740989
 GameObject:
@@ -3492,7 +3421,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1627106354}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -4185,7 +4114,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1627106354}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -4375,8 +4304,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1551258384}
   - {fileID: 987814574}
+  - {fileID: 1551258384}
   m_Father: {fileID: 37007634}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4700,7 +4629,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1424697431}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -5076,8 +5005,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1199278552}
   - {fileID: 1405475176}
+  - {fileID: 1199278552}
   m_Father: {fileID: 1410259534}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5726,40 +5655,12 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1859999827}
---- !u!114 &1868572033
+--- !u!114 &1868572033 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11472102, guid: b2e8400f998569a42a4c53c57f6a8682,
     type: 2}
   m_PrefabInternal: {fileID: 193886382}
-  m_GameObject: {fileID: 77505408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8ea4b21b637012408bb9ab8c52e8e45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mGameModeSelector: {fileID: 1921905785}
-  UIScore: {fileID: 1601838189}
-  GameOverPanel: {fileID: 1410259531}
-  EndText: {fileID: 212176242}
-  EndGameScore: {fileID: 1527703151}
-  EndBonusScore: {fileID: 1545401491}
-  EndTotalScore: {fileID: 2122112434}
-  GamesStandard: {fileID: 1422520687}
-  AverageStandard: {fileID: 914574745}
-  HighStandard: {fileID: 1754235388}
-  GamesContinuous: {fileID: 741986875}
-  AverageContinuous: {fileID: 294251392}
-  HighContinuous: {fileID: 363729678}
-  GamesShifter: {fileID: 1086305877}
-  AverageShifter: {fileID: 2028964253}
-  HighShifter: {fileID: 2017196049}
-  GamesMegaShift: {fileID: 2045255712}
-  AverageMegaShift: {fileID: 793113132}
-  HighMegaShift: {fileID: 1361775421}
-  UIGroupScore: {fileID: 731095417}
-  UIGameMode: {fileID: 1986080319}
-  mGameController: {fileID: 204488339}
 --- !u!1 &1908436961
 GameObject:
   m_ObjectHideFlags: 0
