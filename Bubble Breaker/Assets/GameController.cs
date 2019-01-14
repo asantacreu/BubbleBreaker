@@ -27,34 +27,30 @@ public class GameController : MonoBehaviour {
 
     private List<GameObject> mSelectedGroup;
 
-    private Color test = new Color(50, 50, 50);
+    private Color white = new Color(1, 1, 1);
 
     private int rows = 8;
     private int columns = 15;
-
-    public bool startNewGame;
 
     private bool clickDown = false;
     private bool clickDownPrev = false;
 
     private bool isOnClickRunning = false;
+    
 
-    // Use this for initialization
     void Start() {
-
         mSelectedGroup = new List<GameObject>();
-
         mNewLine = new List<GameObject>();
-
-        startNewGame = true;
+        
+        CreateNewGame();
     }
 	
 	// Update is called once per frame
 	void Update () {
-
-        if (startNewGame){
-            CreateNewGame();
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Exit();
         }
+
         if (!isOnClickRunning) {
             StartCoroutine(OnClick());
         }
@@ -70,8 +66,7 @@ public class GameController : MonoBehaviour {
         }    
     }
 
-    public void CreateNewGame(){
-        startNewGame = false;
+    public void CreateNewGame() {
         mUIController.HideGameOver();
         mSelectedGroup.Clear();
         
@@ -414,9 +409,9 @@ public class GameController : MonoBehaviour {
     public void SelectGroup(GameObject ball) {
         mSelectedGroup.Add(ball);
 
-        AddAdjacentBalls(ball);
+        AddAdjacentBallsToGroup(ball);
 
-        ball.GetComponent<SpriteRenderer>().color = ball.GetComponent<SpriteRenderer>().color + test;
+        ball.GetComponent<SpriteRenderer>().color = (ball.GetComponent<SpriteRenderer>().color + white);
 
         if (mSelectedGroup.Count <= 1) {
             ClearSelectedGroup();
@@ -459,12 +454,12 @@ public class GameController : MonoBehaviour {
 
     private void ClearSelectedGroup() {
         for (int i = 0; i < mSelectedGroup.Count; i++) {
-            mSelectedGroup[i].GetComponent<SpriteRenderer>().color = mSelectedGroup[i].GetComponent<SpriteRenderer>().color - test;
+            mSelectedGroup[i].GetComponent<SpriteRenderer>().color = (mSelectedGroup[i].GetComponent<SpriteRenderer>().color - white);
         }
         mSelectedGroup.Clear();
     }
 
-    private void AddAdjacentBalls(GameObject ball) {
+    private void AddAdjacentBallsToGroup(GameObject ball) {
         
         Ball ballComponent = ball.GetComponent<Ball>();
 
@@ -472,32 +467,32 @@ public class GameController : MonoBehaviour {
             GameObject ballAux = mBallsList[ballComponent.mRowPos - 1][ballComponent.mColPos];
             if (ballAux.GetComponent<Ball>().mBallType == ballComponent.mBallType && !IsBallInSelectedGroup(ballAux)) {
                 mSelectedGroup.Add(ballAux);
-                AddAdjacentBalls(ballAux);
-                ballAux.GetComponent<SpriteRenderer>().color = ballAux.GetComponent<SpriteRenderer>().color + test;
+                AddAdjacentBallsToGroup(ballAux);
+                ballAux.GetComponent<SpriteRenderer>().color = (ballAux.GetComponent<SpriteRenderer>().color + white);
             }
         } 
         if (ballComponent.mColPos - 1 >= 0 && mBallsList[ballComponent.mRowPos][ballComponent.mColPos-1]) {
             GameObject ballAux = mBallsList[ballComponent.mRowPos][ballComponent.mColPos-1];
             if (ballAux.GetComponent<Ball>().mBallType == ballComponent.mBallType && !IsBallInSelectedGroup(ballAux)) {
                 mSelectedGroup.Add(ballAux);
-                AddAdjacentBalls(ballAux);
-                ballAux.GetComponent<SpriteRenderer>().color = ballAux.GetComponent<SpriteRenderer>().color + test;
+                AddAdjacentBallsToGroup(ballAux);
+                ballAux.GetComponent<SpriteRenderer>().color = (ballAux.GetComponent<SpriteRenderer>().color + white);
             }
         } 
         if (ballComponent.mRowPos + 1 <= rows - 1 && mBallsList[ballComponent.mRowPos+1][ballComponent.mColPos]) {
             GameObject ballAux = mBallsList[ballComponent.mRowPos+1][ballComponent.mColPos];
             if (ballAux.GetComponent<Ball>().mBallType == ballComponent.mBallType && !IsBallInSelectedGroup(ballAux)) {
                 mSelectedGroup.Add(ballAux);
-                AddAdjacentBalls(ballAux);
-                ballAux.GetComponent<SpriteRenderer>().color = ballAux.GetComponent<SpriteRenderer>().color + test;
+                AddAdjacentBallsToGroup(ballAux);
+                ballAux.GetComponent<SpriteRenderer>().color = (ballAux.GetComponent<SpriteRenderer>().color + white);
             }
         }
         if (ballComponent.mColPos + 1 <= columns - 1 && mBallsList[ballComponent.mRowPos][ballComponent.mColPos+1]) {
             GameObject ballAux = mBallsList[ballComponent.mRowPos][ballComponent.mColPos+1];
             if (ballAux.GetComponent<Ball>().mBallType == ballComponent.mBallType && !IsBallInSelectedGroup(ballAux)) {
                 mSelectedGroup.Add(ballAux);
-                AddAdjacentBalls(ballAux);
-                ballAux.GetComponent<SpriteRenderer>().color = ballAux.GetComponent<SpriteRenderer>().color + test;
+                AddAdjacentBallsToGroup(ballAux);
+                ballAux.GetComponent<SpriteRenderer>().color = (ballAux.GetComponent<SpriteRenderer>().color + white);
             }
         }    
     }
@@ -594,7 +589,6 @@ public class GameController : MonoBehaviour {
     }
 
     private void EndGame() {
-        
         mUIController.SetEndGameScore("Game Score = " + mScore);
 
         int ballsLeft = BallsLeft();
@@ -630,7 +624,7 @@ public class GameController : MonoBehaviour {
     }
 
     public void CreateNewGameButtonClicked() {
-        startNewGame = true;
+        CreateNewGame();
     }
 
     public void ChangeGameMode(int value) {
