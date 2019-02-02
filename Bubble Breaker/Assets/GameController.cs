@@ -441,7 +441,7 @@ public class GameController : MonoBehaviour {
                             Animation animation = ball.GetComponent<Animation>();
                             animation.Play();
                             animationTime = animation.clip.length;
-                            DestroyObject(mBallsList[i][j],1);
+                            Destroy(mBallsList[i][j], 1);
                             mBallsList[i][j] = null;
                             break;
                         }
