@@ -1303,7 +1303,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 11495790, guid: 4d4e41283d9bb3148b820459f5a957d3, type: 3}
         m_MethodName: ResetStatistics
         m_Mode: 1
         m_Arguments:
